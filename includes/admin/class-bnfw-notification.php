@@ -231,7 +231,59 @@ class BNFW_Notification {
                 </select>
             </td>
         </tr>
+<tr valign="top" id="toggle-category">
+			<th>
+				<?php esc_attr_e( 'Filter by category', 'bnfw' ); ?>
+			</th>
+			<td>
+				<input type="checkbox" id="show-category" name="show-category" value="true" <?php checked( $setting['show-category'], 'true', true ); ?>>
+				<label for="show-category"><?php esc_html_e( 'Show category filter', 'bnfw' ); ?></label>
+			</td>
+        </tr>
 
+        <tr valign="top" id="category">
+			<th scope="row">
+                <label for="category"><?php _e( 'Category', 'bnfw' ); ?></label>
+			</th>
+			<td>
+				<select name="category" id="category" class="select2" data-placeholder="Select the category of the type" style="width:50%">
+				<?php
+
+					foreach ( $types as $type ) {
+					$post_obj = get_post_type_object( $type );
+						$label = $post_obj->labels->singular_name;
+						if ( $type != self::POST_TYPE ) {
+						$args = array(
+							'type'                     => $label,
+							'child_of'                 => 0,
+							'parent'                   => '',
+							'orderby'                  => 'name',
+							'order'                    => 'ASC',
+							'hide_empty'               => 0,
+							'hierarchical'             => 0,
+							'exclude'                  => '',
+							'include'                  => '',
+							'number'                   => '',
+							'taxonomy'                 => 'category',
+							'pad_counts'               => false
+
+						);
+
+						$category = get_categories( $args );
+						foreach($category as $cat)
+						{
+							$label = $label .' - '.$cat->name;
+							?>
+							<option class="option-category" value="<?php echo $cat->name ?>" <?php selected( 'category', $setting['category'] );?>><?php echo $label ?></option>
+							<?php
+							$label = $post_obj->labels->singular_name;
+						}
+					}
+				}
+				?>
+				</select>
+			</td>
+		</tr>
         <tr valign="top" id="user-password-msg">
 			<td>&nbsp;</td>
 			<td>
@@ -515,6 +567,8 @@ class BNFW_Notification {
 			'email-formatting'     => 'html',
 			'message'              => '',
 			'show-fields'          => 'false',
+			'category'			   => '',
+			'show-category'        => 'false',
 			'disable-current-user' => 'false',
 			'disabled'             => 'false',
 		);
